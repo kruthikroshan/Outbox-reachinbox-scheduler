@@ -76,7 +76,8 @@ if (googleEnabled) {
       );
       res.cookie("auth_token", token, {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
+        secure: true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(`${env.frontendUrl}/dashboard`);
@@ -109,7 +110,8 @@ if (googleEnabled) {
       );
       res.cookie("auth_token", token, {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
+        secure: true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(`${env.frontendUrl}/dashboard`);
@@ -158,7 +160,8 @@ router.get("/admin", async (req, res) => {
     );
     res.cookie("auth_token", token, {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: "none",
+      secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.redirect("/admin/queues");

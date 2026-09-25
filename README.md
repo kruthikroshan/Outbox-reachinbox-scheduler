@@ -1,5 +1,6 @@
 # ReachInbox — Full-stack Email Job Scheduler
 
+**🔴 Live Demo:** [https://outbox-reachinbox-scheduler.vercel.app/](https://outbox-reachinbox-scheduler.vercel.app/)
 A production-shaped slice of ReachInbox's send pipeline: schedule cold
 emails via API, fan them out through BullMQ delayed jobs (no cron), throttle
 and rate-limit them like a real provider, survive restarts without losing or

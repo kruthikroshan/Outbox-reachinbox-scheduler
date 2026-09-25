@@ -20,7 +20,7 @@ reachinbox-scheduler/
 
 | User Dashboard | Admin BullMQ Dashboard |
 | :---: | :---: |
-| ![User Dashboard](screenshots/user_dashboard.png) <br/> *Standard users can schedule and monitor their own campaigns.* | ![Admin Dashboard](screenshots/admin_dashboard.png) <br/> *Admins get live visibility into background workers and queues.* |
+| ![User Dashboard](screenshots/user_dashboard_v2.png) <br/> *Standard users can schedule and monitor their own campaigns.* | ![Admin Dashboard](screenshots/admin_dashboard.png) <br/> *Admins get live visibility into background workers and queues.* |
 
 ---
 

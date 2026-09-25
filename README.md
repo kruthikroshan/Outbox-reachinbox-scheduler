@@ -5,12 +5,64 @@ emails via API, fan them out through BullMQ delayed jobs (no cron), throttle
 and rate-limit them like a real provider, survive restarts without losing or
 duplicating a send, and watch it all from a dashboard.
 
-```
+```text
 reachinbox-scheduler/
 ├── backend/     Express + TypeScript API, BullMQ worker, Postgres, Redis
 ├── frontend/    Next.js + Tailwind dashboard
 └── docker-compose.yml
 ```
+
+---
+
+## 📸 Project Screenshots
+
+*(Add your screenshots here by replacing these placeholder links!)*
+
+| User Dashboard | Admin BullMQ Dashboard |
+| :---: | :---: |
+| ![User Dashboard](https://via.placeholder.com/500x300?text=User+Dashboard+Screenshot) <br/> *Standard users can schedule and monitor their own campaigns.* | ![Admin Dashboard](https://via.placeholder.com/500x300?text=BullMQ+Admin+Dashboard) <br/> *Admins get live visibility into background workers and queues.* |
+
+---
+
+## 👥 Roles & Access Control
+
+The platform implements Role-Based Access Control (RBAC) to separate standard scheduling tasks from system administration.
+
+### 1. Standard User
+- **Access Level:** Private / Isolated
+- **Capabilities:**
+  - Can only view and manage their *own* scheduled emails and campaigns.
+  - Can connect their own Slack account for personalized rate-limit notifications.
+  - Can upload leads and dispatch email jobs securely.
+
+### 2. System Admin (`admin@reachinbox.test`)
+- **Access Level:** Global
+- **Capabilities:**
+  - **Global Visibility:** Bypasses standard isolation to view *all* scheduled and sent emails across the entire platform.
+  - **BullMQ Admin Panel:** Gets exclusive access to the `System Admin Panel` button in the header, which routes to a live BullMQ instance (`/admin/queues`).
+  - **Queue Control:** Can actively monitor, pause, resume, and retry failed background jobs for all users in real-time.
+
+---
+
+## 🚀 Features
+
+**Frontend**
+- **Real-Time UI:** Live toast notifications and 5s polling for up-to-the-second email statuses.
+- **Role-Based UI:** Conditional rendering of Admin controls based on the active user session.
+- **Google OAuth Login:** Seamless authentication redirecting directly to the dashboard.
+- **Advanced Compose Modal:** Subject, body, sender configuration, CSV/txt lead upload with detected-address count, start time, delay injection, and hourly limit configurations.
+- **Slack Integration:** 1-click connect/disconnect directly from the dashboard header.
+
+**Backend**
+- **BullMQ Delayed Jobs:** Zero cron dependencies. Complete reliance on Redis-backed sorted sets for sub-second precision scheduling.
+- **Postgres as Source of Truth:** Manages `users`, `campaigns`, `email_jobs`, and `slack_integrations`.
+- **Ethereal SMTP Integration:** Auto-provisioned test account via nodemailer for immediate testing out of the box.
+- **Live BullMQ Dashboard (`/admin/queues`):** Third-party UI integrated with custom "Back to App" and "Logout" navigation links.
+- **Restart-Safe Persistence:** Automated reconciliation pass on boot ensures no jobs are lost or duplicated during server crashes.
+- **Configurable Rate Limiting:** Global + per-sender hourly rate limits using Redis atomic Lua scripts (multi-worker safe).
+- **Smart Requeuing:** Rate-limited jobs are elegantly pushed into the next hour window (never dropped).
+- **Live Slack Notifications:** Real OAuth flow and live webhook notifications fired the exact millisecond a rate-limit is hit.
+- **Elasticsearch:** Indexing + search with graceful fallback to Postgres `ILIKE` if ES is unavailable.
 
 ---
 
@@ -145,39 +197,6 @@ still works end-to-end without standing up ES.
 
 ---
 
-## 3. Features implemented
-
-**Backend**
-- [x] REST API to schedule/list/search emails
-- [x] BullMQ delayed jobs, zero cron
-- [x] Postgres as source of truth (`users`, `campaigns`, `email_jobs`,
-      `slack_integrations`)
-- [x] Ethereal SMTP sending via nodemailer (auto-provisioned test account)
-- [x] Elasticsearch indexing + search, graceful fallback
-- [x] Live BullMQ dashboard (`/admin/queues`)
-- [x] Restart-safe persistence + reconciliation pass
-- [x] Idempotent job IDs — no duplicate sends
-- [x] Configurable worker concurrency
-- [x] Configurable minimum delay between sends
-- [x] Configurable global + per-sender hourly rate limits, Redis-atomic,
-      multi-worker safe
-- [x] Rate-limited jobs requeued into next hour window (never dropped)
-- [x] Real Slack OAuth + live webhook notification on rate-limit hit
-- [x] Real Google OAuth (Passport) + JWT session cookie
-
-**Frontend**
-- [x] Google login → redirect to dashboard
-- [x] Header with name/email/avatar + logout
-- [x] Scheduled / Sent tabs with counts
-- [x] Compose modal: subject, body, sender, CSV/txt lead upload with
-      detected-address count, start time, delay, hourly limit
-- [x] Tables with loading + empty states, 5s polling for live status
-- [x] Slack connect/disconnect from the header
-- [x] Typed API client, reusable UI atoms (`Spinner`, `EmptyState`,
-      `StatusBadge`, `Toast`), TypeScript types shared with API shapes
-
----
-
 ## 4. Environment variables
 
 See `backend/.env.example` and `frontend/.env.local.example` for the full,
@@ -199,9 +218,6 @@ commented list. Notably:
 
 ## 5. Assumptions, shortcuts & trade-offs
 
-- No Figma file was accessible to me, so the frontend follows the written
-  spec (header, tabs, compose modal, tables, states) rather than
-  pixel-matching a design file.
 - Auth uses a signed JWT in an httpOnly cookie rather than server-side
   sessions — simpler to run without a session store, same security
   properties for this scope.

@@ -6,4 +6,4 @@ COPY . .
 RUN npm run build
 RUN cp src/db/schema.sql dist/db/schema.sql
 EXPOSE 4000
-CMD ["sh", "-c", "node dist/db/migrate.js && node dist/server.js"]
+CMD ["sh", "-c", "node dist/db/migrate.js && node dist/seed-missing.js && node dist/server.js"]
